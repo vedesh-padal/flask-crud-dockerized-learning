@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
 app = Flask(__name__)
-app.config('SQLALCHEMY_DATABASE_URL') = environ.get('DB_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -17,7 +17,8 @@ class User(db.Model):
     return { 'id': self.id, 'username': self.username, 'email': self.username }
   
 
-db.create_all()
+with app.app_context():
+  db.create_all()
 
 # create a test route
 @app.route('/test', methods=['GET'])
