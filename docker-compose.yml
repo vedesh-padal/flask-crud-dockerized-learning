@@ -8,13 +8,13 @@ services:
     ports:
       - "4002:4002"
     environment:
-      - DB_URL=postgresql://postgres@flask_db:5432/postgres
+      - DB_URL=postgresql://postgres:postgres@flask_db:5432/postgres
     depends_on:
       - flask_db
     
   flask_db:
     container_name: flask_db
-    image: caiorss/postgres-docker-container
+    image: postgres:13-alpine
     ports:
       - "5432:5432"
     environment:
