@@ -1,4 +1,4 @@
-FROM python:3.6-apline
+FROM python:3.11-alpine
 
 WORKDIR /apline
 
@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 4002
 
-CMD [ "flask", "run", "--host=0.0.0.0", "port=4000"]
+CMD [ "flask", "run", "--host=0.0.0.0", "--port=4002"]
