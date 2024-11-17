@@ -90,15 +90,16 @@ def update_user(id):
 
   
 # delete a user
-@app.route('/users.<int:id>', methods=['DELETE'])
+@app.route('/users/<int:id>', methods=['DELETE'])
 def delete_user(id):
-  try:
-    user = User.query.filter_by(id=id).first()
-    if user:
-      db.session.delete(user)
-      db.session.commit()
-      return make_response(jsonify({'message': 'user deleted'}), 200)
-    return make_response(jsonify({ 'message': 'user not found'}), 404)
-  except e:
-    return make_response(jsonify({ 'message': 'error deleting user'}), 500)
-  
+    user = User.query.get(id)
+    if not user:
+        return create_response(message='User not found', status=404)
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        return create_response(message='User deleted')
+    except Exception as e:
+        db.session.rollback()
+        return create_response(message='Error deleting user', status=500)
