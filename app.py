@@ -5,7 +5,6 @@ from os import environ
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disabling event system to save memory
-
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -16,7 +15,7 @@ class User(db.Model):
   email = db.Column(db.String(120), unique=True, nullable=False)
 
   def json(self):
-    return { 'id': self.id, 'username': self.username, 'email': self.username }
+        return {'id': self.id, 'username': self.username, 'email': self.email}
   
 
 with app.app_context():
