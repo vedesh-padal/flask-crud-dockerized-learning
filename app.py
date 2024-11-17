@@ -8,18 +8,27 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disabling event system t
 db = SQLAlchemy(app)
 
 class User(db.Model):
-  __tablename__ = 'users'
+    __tablename__ = 'users'
 
-  id = db.Column(db.Integer, primary_key = True)
-  username = db.Column(db.String(80), unique=True, nullable=False)
-  email = db.Column(db.String(120), unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
 
-  def json(self):
-        return {'id': self.id, 'username': self.username, 'email': self.email}
-  
+    def json(self):
+          return {'id': self.id, 'username': self.username, 'email': self.email}
+    
 
 with app.app_context():
-  db.create_all()
+    db.create_all()
+
+def create_response(data=None, message=None, status=200):
+    response = {'status': 'success' if status < 400 else 'error'}
+    if data is not None:
+        response['data'] = data
+    if message is not None:
+        response['message'] = message
+    return make_response(jsonify(response), status)
+
 
 # create a test route
 @app.route('/test', methods=['GET'])
