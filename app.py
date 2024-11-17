@@ -57,23 +57,16 @@ def create_user():
 # get all users
 @app.route('/users', methods=['GET'])
 def get_users():
-  try:
     users = User.query.all()
-    return  make_response(jsonify({ 'users': [ user.json() for user in users]}), 200)
-  
-  except e:
-    return make_response(jsonify({ 'message': 'error getting users'}), 500)
+    return create_response(data=[user.to_dict() for user in users])
   
 # get user by id
 @app.route('/users/<int:id>', methods=['GET'])
 def get_user(id):
-  try:
-    user = User.query.filter_by(id=id).first()
+    user = User.query.get(id)
     if user:
-      return make_response(jsonify({'user': user.json()}), 200)
-    return make_response(jsonify({ 'message': 'user not found'}), 404)
-  except e:
-    return make_response(jsonify({ 'message': 'error getting user'}), 500)
+        return create_response(data=user.to_dict())
+    return create_response(message='User not found', status=404)
 
 # update a user
 @app.route('/users/<int:id>', methods=['PUT'])
