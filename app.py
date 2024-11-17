@@ -38,14 +38,21 @@ def test():
 # create a user
 @app.route('/user', methods=['POST'])
 def create_user():
-  try:
     data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'])
-    db.session.add(new_user)
-    db.session.commit()
-    return make_response(jsonify({ 'message': 'user created'}), 201)
-  except e:
-    return make_response(jsonify({ 'message': 'error creating user'}), 500)
+    if not data or not data.get('username') or not data.get('email'):
+        return create_response(message='Invalid input', status=400)
+
+    if User.query.filter((User.username == data['username']) | (User.email == data['email'])).first():
+        return create_response(message='User with this username or email already exists', status=409)
+
+    try:
+        new_user = User(username=data['username'], email=data['email'])
+        db.session.add(new_user)
+        db.session.commit()
+        return create_response(message='User created', status=201, data=new_user.to_dict())
+    except Exception as e:
+        db.session.rollback()
+        return create_response(message='Error creating user', status=500)
   
 # get all users
 @app.route('/users', methods=['GET'])
