@@ -33,7 +33,7 @@ def create_response(data=None, message=None, status=200):
 # create a test route
 @app.route('/test', methods=['GET'])
 def test():
-  return make_response(jsonify({'message': 'test route'}), 200)
+    return create_response(message='Test route')
 
 # create a user
 @app.route('/user', methods=['POST'])
