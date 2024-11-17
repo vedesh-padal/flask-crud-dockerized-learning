@@ -71,17 +71,23 @@ def get_user(id):
 # update a user
 @app.route('/users/<int:id>', methods=['PUT'])
 def update_user(id):
-  try:
-    user = User.query.filter_by(id=id).first()
-    if user:
-      data = request.get_json()
-      user.username = data['username']
-      user.email = data['email']
-      db.session.commit()
-      return make_response(jsonify({ 'message': 'user updated'}), 200)
-    return make_response(jsonify({ 'message': 'user not found'}), 404)
-  except e:
-    return make_response(jsonify({ 'message': 'error updating user'}), 500)
+    data = request.get_json()
+    if not data or not data.get('username') or not data.get('email'):
+        return create_response(message='Invalid input', status=400)
+
+    user = User.query.get(id)
+    if not user:
+        return create_response(message='User not found', status=404)
+
+    try:
+        user.username = data['username']
+        user.email = data['email']
+        db.session.commit()
+        return create_response(message='User updated', data=user.to_dict())
+    except Exception as e:
+        db.session.rollback()
+        return create_response(message='Error updating user', status=500)
+
   
 # delete a user
 @app.route('/users.<int:id>', methods=['DELETE'])
